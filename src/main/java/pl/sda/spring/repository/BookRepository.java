@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 import pl.sda.spring.model.Book;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -13,11 +14,11 @@ public class BookRepository {
     private Set<Book> books = initialize();
 
     private Set<Book> initialize() {
-        return Set.of(new Book(1L, "Kaczanowski", "Testy", null),
+        return new HashSet<>(Set.of(new Book(1L, "Kaczanowski", "Testy", null),
             new Book(2L, "Rowling", "Harry Potter", null),
             new Book(3L, "Tolkien", "Wladca Pierscieni", null),
             new Book(4L, "Bloch", "Effective Java", null),
-            new Book(5L, "Dostojewski", "Zbrodnia i kara", null));
+            new Book(5L, "Dostojewski", "Zbrodnia i kara", null)));
     }
 
     public Optional<Book> borrowBook(String title, LocalDate borrowedTill) {
@@ -46,6 +47,16 @@ public class BookRepository {
             .orElseThrow()
         );
     }
+
+    public Book returnBook(Long id) {
+        Book bookToReturn = books.stream()
+            .filter(book -> book.getId().equals(id))
+            .findFirst()
+            .orElseThrow(() -> new RuntimeException("Book with id " + id + " not found."));
+        bookToReturn.setBorrowedTill(null);
+        return bookToReturn;
+    }
+
 
     private Long generateNextId() {
         return books.stream()
