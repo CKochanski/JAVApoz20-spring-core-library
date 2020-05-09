@@ -6,6 +6,7 @@ import pl.sda.spring.repository.BookRepository;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class OrderService {
@@ -30,5 +31,12 @@ public class OrderService {
 
     public Book returnBook(Long id) {
         return bookRepository.returnBook(id);
+    }
+
+    public Set<Book> findAll(String title) {
+        if (title == null) {
+            return bookRepository.findAll();
+        }
+        return bookRepository.findAllByTitle(title);
     }
 }

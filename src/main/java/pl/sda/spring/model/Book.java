@@ -9,6 +9,7 @@ public class Book {
     private String author;
     private String title;
     private LocalDate borrowedTill;
+//    private String reader; null when not borrowed
 
     public Book(Long id, String author, String title, LocalDate borrowedTill) {
         this.id = id;

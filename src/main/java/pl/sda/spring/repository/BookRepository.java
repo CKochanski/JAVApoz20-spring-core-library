@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Repository
 public class BookRepository {
@@ -22,10 +23,8 @@ public class BookRepository {
     }
 
     public Optional<Book> borrowBook(String title, LocalDate borrowedTill) {
-        Optional<Book> foundBook = books.stream()
-            .filter(book -> title.equals(book.getTitle()))
-            .filter(book -> book.getBorrowedTill() == null)
-            .findAny();
+        Optional<Book> foundBook = books.stream().filter(book -> title.equals(book.getTitle()))
+            .filter(book -> book.getBorrowedTill() == null).findAny();
         if (foundBook.isPresent()) {
             Book book = foundBook.get();
             book.setBorrowedTill(borrowedTill);
@@ -41,17 +40,12 @@ public class BookRepository {
     }
 
     public void remove(Long id) {
-        books.remove(books.stream()
-            .filter(book -> book.getId().equals(id))
-            .findFirst()
-            .orElseThrow()
-        );
+        books.remove(
+            books.stream().filter(book -> book.getId().equals(id)).findFirst().orElseThrow());
     }
 
     public Book returnBook(Long id) {
-        Book bookToReturn = books.stream()
-            .filter(book -> book.getId().equals(id))
-            .findFirst()
+        Book bookToReturn = books.stream().filter(book -> book.getId().equals(id)).findFirst()
             .orElseThrow(() -> new RuntimeException("Book with id " + id + " not found."));
         bookToReturn.setBorrowedTill(null);
         return bookToReturn;
@@ -59,9 +53,16 @@ public class BookRepository {
 
 
     private Long generateNextId() {
+        return books.stream().mapToLong(Book::getId).max().orElseThrow() + 1;
+    }
+
+    public Set<Book> findAll() {
+        return books;
+    }
+
+    public Set<Book> findAllByTitle(String title) {
         return books.stream()
-            .mapToLong(Book::getId)
-            .max()
-            .orElseThrow() + 1;
+            .filter(book -> book.getTitle().equals(title))
+            .collect(Collectors.toSet());
     }
 }
