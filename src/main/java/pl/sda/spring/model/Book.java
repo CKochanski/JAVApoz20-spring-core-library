@@ -1,15 +1,25 @@
 package pl.sda.spring.model;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import java.time.LocalDate;
 import java.util.Objects;
 
+@Entity
 public class Book {
 
+    @Id
+    @GeneratedValue(generator = "bookSeq")
+    @SequenceGenerator(name = "bookSeq", sequenceName = "book_seq", allocationSize = 1)
     private Long id;
     private String author;
     private String title;
     private LocalDate borrowedTill;
 //    private String reader; null when not borrowed
+
+    public Book() {}
 
     public Book(Long id, String author, String title, LocalDate borrowedTill) {
         this.id = id;
